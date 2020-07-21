@@ -6,6 +6,10 @@
 /src/webapp/node_modules
 /.pnp
 .pnp.js
+coverage
+*.log
+coverage.lcov
+.nyc_output
 
 # testing
 /coverage
@@ -23,3 +27,4 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
