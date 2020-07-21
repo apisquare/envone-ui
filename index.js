@@ -1,1 +1,1 @@
-module.exports = require('./src/api');
+module.exports = require('./src/api').middlewareWrapper;

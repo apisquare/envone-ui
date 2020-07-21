@@ -16,7 +16,8 @@ app.use(
     secrets: ['AWS_ACCESS_SECRET', 'DB_CONNECTION_PASSWORD'],
     exclude: ["ANALYTICS_URL"],
     include: ['ENV'],
-    envOne: envOne
+    envOne: envOne,
+    isAuthRequired: true
   }),
 );
 

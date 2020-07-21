@@ -1,10 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 const Handlebars = require('handlebars');
-var jwt = require('jsonwebtoken');
-const JWT_SECRET = "SUTHA_TOKEN";
-const isDebugEnabled = true;
-const DEFAULT_AUTH_TOKEN = "123" //"ZLbDGoXOg2sl!K$XOg2sl";
+const jwt = require('jsonwebtoken');
+const constants = require('./constants');
+const { DEFAULT_TOKEN_SECRET,  DEFAULT_AUTH_TOKEN, DEFAULT_API_PATHS } = constants;
+
+let IS_AUTH_REQUIRED = true;
 
 const handleBardConfig = {
   ATTACH_SCRIPT: fs.readFileSync(path.join(__dirname, './webapp/dist/index.bundle.js')),
@@ -15,17 +16,23 @@ const htmlTemplate = fs
 .readFileSync(path.join(__dirname, './webapp/dist/index.html'))
 .toString();
 
+const render = Handlebars.compile(htmlTemplate);
+
 /**
  * Log messages in console
  * @param {*} message 
  */
 function logger (message) {
-  if (isDebugEnabled) {
+  if (IS_DEBUG_ENABLED) {
     // eslint-disable-next-line no-console
     console.log(`[envone][DEBUG] ${message}`);
   }
 }
 
+/**
+ * Format environment keys and values as an array
+ * @param {*} envData 
+ */
 function formatEnvObjects(envData) {
   let formattedEnvData = [];
   if (envData) {
@@ -36,6 +43,10 @@ function formatEnvObjects(envData) {
   return formattedEnvData;
 }
 
+/**
+ * Format secret values to hide the actual content
+ * @param {*} secretValue 
+ */
 function secretFormat(secretValue) {
   let formattedSecret = "";
   if (secretValue) {
@@ -48,34 +59,88 @@ function secretFormat(secretValue) {
   return formattedSecret;
 }
 
+/**
+ * Redirect response with given URL
+ * @param {*} res 
+ * @param {*} relativePath 
+ */
 function responseRedirect(res, relativePath) {
-  res.writeHead(301,
+  res.writeHead(307,
     {Location: relativePath}
   );
   return res.end();
 }
 
-function signJwtToken(ipAddress) {
+/**
+ * Compile and send the environment dashboard component with the response.
+ * @param {*} res 
+ */
+function sendCompiledEnvDashboard(res, envData) {
+  handleBardConfig.ATTACH_VARS = `const envData=${JSON.stringify(formatEnvObjects(envData))}`;
+  return res.send(render(handleBardConfig));
+}
+
+/**
+ * Sign JWT token with given ip address
+ * @param {*} ipAddress 
+ */
+function signJwtToken(ipAddress, jwtSecret) {
   const token = jwt.sign({
     ip: ipAddress,
     time: Date.now()
-  }, JWT_SECRET, { expiresIn: '3s' });
+  }, jwtSecret, { expiresIn: '3s' });
   return token;
 }
 
-function verifyJwtToken(token) {
+/**
+ * Verify the JWT token
+ * @param {*} token 
+ */
+function verifyJwtToken(token, jwtSecret) {
   if (!token) {
     return { error: 'empty' };
   }
   try {
-    return jwt.verify(token, JWT_SECRET);
+    return jwt.verify(token, jwtSecret);
   } catch(err) {
     return { error: err.message };
   }
 }
 
+/**
+ * Retrieve existing process environments, will be used to mock the process envs
+ */
+module.exports.retrieveProcessEnv = function () {
+  return process.env;
+};
+
+function getProcessEnv() {
+  return module.exports.retrieveProcessEnv();
+}
+
+/**
+ * Middle ware wrapper to expose the data via given APIs
+ * @param {*} config 
+ */
 function middlewareWrapper(config = {}) {
-  const { include, exclude, secrets, envOne, authorizationToken = DEFAULT_AUTH_TOKEN } = config; // TODO: Reset envOneCallBack default
+  const {
+    include,
+    exclude,
+    secrets,
+    envOne,
+    authorizationToken = DEFAULT_AUTH_TOKEN,
+    apiPath = {},
+    isAuthRequired = true,
+    tokenSecret = DEFAULT_TOKEN_SECRET
+  } = config; // TODO: Reset envOneCallBack default
+
+  IS_AUTH_REQUIRED = isAuthRequired;
+
+  const { 
+    default: DEFAULT_PATH = DEFAULT_API_PATHS.default,
+    auth: AUTH_PATH = DEFAULT_API_PATHS.auth, 
+    dashboard: DASHBOARD_PATH = DEFAULT_API_PATHS.dashboard
+  } = apiPath;
 
   let envData;
 
@@ -83,8 +148,8 @@ function middlewareWrapper(config = {}) {
     if (Array.isArray(include)) {
       let inclusiveEnvData = {};
       include.forEach(key => {
-        if (key in process.env){
-          inclusiveEnvData[key] =  process.env[key];
+        if (key in getProcessEnv()){
+          inclusiveEnvData[key] =  getProcessEnv()[key];
         }
       });
 
@@ -101,8 +166,8 @@ function middlewareWrapper(config = {}) {
       if (envKeys && Array.isArray(envKeys)) {
         let envOneData = {};
         envKeys.forEach(key => {
-          if (key in process.env){
-            envOneData[key] =  process.env[key];
+          if (key in getProcessEnv()){
+            envOneData[key] =  getProcessEnv()[key];
           }
         });
 
@@ -119,8 +184,6 @@ function middlewareWrapper(config = {}) {
     }
   } 
   
- 
-
   if (envData) {
     if (exclude) {
       if (Array.isArray(exclude)) {
@@ -146,37 +209,52 @@ function middlewareWrapper(config = {}) {
       } 
     }
   }
-  
-  const render = Handlebars.compile(htmlTemplate);
 
+  /**
+   * Custom middle ware function to expose environment variables APIs
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
   function middleware(req, res, next) {
     var ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-    if (req.path === "/env/auth" && req.method == "POST") {
-      const { authorization } = req.body;
-      if (authorization === authorizationToken) {
-        return responseRedirect(res, `/env/dashboard?token=${signJwtToken(ipAddress)}`);
-      } else {
-        return res.status(401).send({ error: 'Invalid authorization'});
-      }
-    } else if (req.path === "/env") {
-      handleBardConfig.ATTACH_VARS = `const envData=null`;
-      return res.send(render(handleBardConfig));
-    } else if (req.path === "/env/dashboard") {
-      const { token } = req.query;
-      const { ip } = verifyJwtToken(token);
-      if (ip && ip === ipAddress) {
-        handleBardConfig.ATTACH_VARS = `const envData=${JSON.stringify(formatEnvObjects(envData))}`;
-        return res.send(render(handleBardConfig));
-      } else {
-        return responseRedirect(res, `/env?error=invalid_token`);
+    if (!IS_AUTH_REQUIRED) {
+      if (req.method.toUpperCase() === "GET" && req.path === DASHBOARD_PATH) {
+        return sendCompiledEnvDashboard(res, envData);
       }
     } else {
-      next();
+      if (req.method.toUpperCase() == "POST") {
+        if (req.path === AUTH_PATH) {
+          const { authorization } = req.body;
+          if (authorization === authorizationToken) {
+            return responseRedirect(res, `${DASHBOARD_PATH}?token=${signJwtToken(ipAddress, tokenSecret)}`);
+          } else {
+            return res.status(401).send({ error: 'Invalid token'});
+          }
+        }
+      } else if (req.method.toUpperCase() == "GET") {
+        if (req.path === AUTH_PATH) {
+          return responseRedirect(res, `${DEFAULT_PATH}?error=invalid_session`);
+        } else if (req.path === DEFAULT_PATH) {
+          handleBardConfig.ATTACH_VARS = `const envData=null`;
+          return res.send(render(handleBardConfig));
+        } else if (req.path === DASHBOARD_PATH) {
+          const { token } = req.query;
+          const { ip } = verifyJwtToken(token, tokenSecret);
+          if (ip && ip === ipAddress) {
+            return sendCompiledEnvDashboard(res, envData);
+          } else {
+            return responseRedirect(res, `${DEFAULT_PATH}?error=invalid_token`);
+          }
+        }
+      }
     }
+
+    next();
   }
 
   return middleware;
 }
 
-module.exports = middlewareWrapper;
+module.exports.middlewareWrapper = middlewareWrapper;
