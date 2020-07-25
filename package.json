@@ -1,5 +1,5 @@
 {
-  "name": "envone-api",
+  "name": "envone-ui",
   "version": "0.1.0",
   "description": "Dashboard to manage your application environment variables",
   "main": "index.js",
@@ -18,7 +18,7 @@
   "contributors": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/APISquare/envone-api"
+    "url": "git+https://github.com/APISquare/envone-ui"
   },
   "license": "MIT",
   "scripts": {
@@ -59,9 +59,9 @@
     }
   },
   "bugs": {
-    "url": "https://github.com/APISquare/envone-api/issues"
+    "url": "https://github.com/APISquare/envone-ui/issues"
   },
-  "homepage": "https://github.com/APISquare/envone-api#readme",
+  "homepage": "https://github.com/APISquare/envone-ui#readme",
   "directories": {
     "tests": "tests"
   }

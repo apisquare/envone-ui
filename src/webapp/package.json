@@ -1,5 +1,5 @@
 {
-  "name": "envone-api-ui",
+  "name": "envone-ui-dashboard",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
