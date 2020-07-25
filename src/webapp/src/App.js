@@ -38,7 +38,7 @@ class App extends React.Component {
   getRows(environmentConfig) {
     if (environmentConfig) {
       const tableRows = environmentConfig.map(envConfig => 
-        <tr key={envConfig.key}>
+        <tr key={envConfig.key} id="envOneApi_env_table_row">
           <td data-label="Key">{envConfig.key}</td>
           <td data-label="Value">{envConfig.value}</td>
         </tr>
@@ -67,8 +67,8 @@ class App extends React.Component {
 
         <div className="content">
           {documentEnvData ? (
-            <table>
-              <thead>
+            <table id="envOneApi_env_table">
+              <thead id="envOneApi_env_table_head">
                 <tr>
                   <th scope="col">Key</th>
                   <th scope="col">Value</th>
@@ -79,7 +79,7 @@ class App extends React.Component {
               </tbody>
             </table>
           ) : (
-            <div className="auth-form-wrap">
+            <div className="auth-form-wrap" id="envOneApi_auth_content">
               <input type="text" placeholder="Enter authorize token" onChange={this.setAuthToken} value={authToken} />
               <input type="submit"  onClick={this.onAuthorizeClick} value="Authorize" />
             </div>

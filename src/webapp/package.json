@@ -34,8 +34,7 @@
   },
   "scripts": {
     "start": "babel-node ./node_modules/webpack-dev-server/bin/webpack-dev-server --open",
-    "build": "NODE_ENV=production babel-node ./node_modules/webpack/bin/webpack",
-    "test": "react-scripts test"
+    "build": "NODE_ENV=production babel-node ./node_modules/webpack/bin/webpack"
   },
   "browserslist": {
     "production": [
