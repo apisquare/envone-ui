@@ -39,8 +39,8 @@ function sendCompiledEnvDashboard(res, envData) {
 }
 
 /**
- * Middle ware wrapper to expose the data via given APIs
- * @param {*} config 
+ * Middleware wrapper to expose the data via given APIs
+ * @param {*} config - Custom configurations
  */
 function configureMiddleware(config = {}) {
   const {
@@ -177,8 +177,12 @@ function configureMiddleware(config = {}) {
   return middleware;
 }
 
-function api(configOutput = {}) {
-  return configureMiddleware({ configOutput });
+/**
+ * EnvOneApi wrapper to process and expose the data
+ * @param {*} configuredEnvironmentValues - Configuration output from EnvOne or DotEnv.
+ */
+function api(configuredEnvironmentValues = {}) {
+  return configureMiddleware({ configOutput: configuredEnvironmentValues });
 }
 
 function getProcessEnv() {
