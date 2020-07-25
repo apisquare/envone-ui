@@ -80,7 +80,7 @@ class App extends React.Component {
             </table>
           ) : (
             <div className="auth-form-wrap" id="envOneApi_auth_content">
-              <input type="text" placeholder="Enter authorize token" onChange={this.setAuthToken} value={authToken} />
+              <input type="password" placeholder="Enter authorize token" onChange={this.setAuthToken} value={authToken} />
               <input type="submit"  onClick={this.onAuthorizeClick} value="Authorize" />
             </div>
           )}
