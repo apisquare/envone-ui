@@ -1,23 +1,26 @@
 
 const express = require('express');
 const envOne = require('envone')
-envOne.config();
-const cors = require('cors');
 const bodyParser = require("body-parser");
+const envOneApi = require('../index');
+
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// Configure environment variables
+const configuredEnvOne = envOne.config();
+
+// Configure envOneApi
 app.use(
-  require('../index')({
+  envOneApi.configure({
     secrets: ['AWS_ACCESS_SECRET', 'DB_CONNECTION_PASSWORD'],
-    exclude: ["ANALYTICS_URL"],
+    exclude: ['ANALYTICS_URL'],
     include: ['ENV'],
-    envOne: envOne,
-    isAuthRequired: true
+    isAuthRequired: true,
+    configOutput: configuredEnvOne
   }),
 );
 
