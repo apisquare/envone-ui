@@ -50,7 +50,7 @@
     "sinon": "^7.5.0"
   },
   "lint-staged": {
-    "*.js": "eslint"
+    "*.js": "yarn lint"
   },
   "husky": {
     "hooks": {
