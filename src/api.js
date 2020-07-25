@@ -191,4 +191,4 @@ function getProcessEnv() {
 
 module.exports.configure = configureMiddleware;
 module.exports.api = api;
-module.exports.retrieveProcessEnv = getProcessEnvFromUtil;
+module.exports.retrieveProcessEnv = getProcessEnvFromUtil
