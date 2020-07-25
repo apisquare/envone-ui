@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const Handlebars = require('handlebars');
-const jwt = require('jsonwebtoken');
 const constants = require('./constants');
-const { DEFAULT_TOKEN_SECRET,  DEFAULT_AUTH_TOKEN, DEFAULT_API_PATHS } = constants;
+const { DEFAULT_TOKEN_SECRET,  DEFAULT_AUTH_TOKEN, DEFAULT_API_PATHS, IS_DEBUG_ENABLED } = constants;
+const { formatEnvObjects, secretFormat, responseRedirect, signJwtToken, verifyJwtToken, getProcessEnv: getProcessEnvFromUtil } = require('./utils');
 
 let IS_AUTH_REQUIRED = true;
 
@@ -30,48 +30,6 @@ function logger (message) {
 }
 
 /**
- * Format environment keys and values as an array
- * @param {*} envData 
- */
-function formatEnvObjects(envData) {
-  let formattedEnvData = [];
-  if (envData) {
-    Object.keys(envData).forEach(envKey => {
-      formattedEnvData.push({ key: envKey, value: envData[envKey]});
-    });
-  }
-  return formattedEnvData;
-}
-
-/**
- * Format secret values to hide the actual content
- * @param {*} secretValue 
- */
-function secretFormat(secretValue) {
-  let formattedSecret = "";
-  if (secretValue) {
-    formattedSecret = secretValue[0];
-  }
-  const secretLength = Math.floor(5 + Math.random() * 4);
-  for (let i = 1; i < secretLength; i++) {
-    formattedSecret += '*';
-  }
-  return formattedSecret;
-}
-
-/**
- * Redirect response with given URL
- * @param {*} res 
- * @param {*} relativePath 
- */
-function responseRedirect(res, relativePath) {
-  res.writeHead(307,
-    {Location: relativePath}
-  );
-  return res.end();
-}
-
-/**
  * Compile and send the environment dashboard component with the response.
  * @param {*} res 
  */
@@ -81,53 +39,15 @@ function sendCompiledEnvDashboard(res, envData) {
 }
 
 /**
- * Sign JWT token with given ip address
- * @param {*} ipAddress 
- */
-function signJwtToken(ipAddress, jwtSecret) {
-  const token = jwt.sign({
-    ip: ipAddress,
-    time: Date.now()
-  }, jwtSecret, { expiresIn: '3s' });
-  return token;
-}
-
-/**
- * Verify the JWT token
- * @param {*} token 
- */
-function verifyJwtToken(token, jwtSecret) {
-  if (!token) {
-    return { error: 'empty' };
-  }
-  try {
-    return jwt.verify(token, jwtSecret);
-  } catch(err) {
-    return { error: err.message };
-  }
-}
-
-/**
- * Retrieve existing process environments, will be used to mock the process envs
- */
-module.exports.retrieveProcessEnv = function () {
-  return process.env;
-};
-
-function getProcessEnv() {
-  return module.exports.retrieveProcessEnv();
-}
-
-/**
  * Middle ware wrapper to expose the data via given APIs
  * @param {*} config 
  */
-function middlewareWrapper(config = {}) {
+function configureMiddleware(config = {}) {
   const {
-    include,
-    exclude,
-    secrets,
-    envOne,
+    include = [],
+    exclude = [],
+    secrets = [],
+    configOutput,
     authorizationToken = DEFAULT_AUTH_TOKEN,
     apiPath = {},
     isAuthRequired = true,
@@ -159,47 +79,47 @@ function middlewareWrapper(config = {}) {
     }
   }
 
-  if (envOne) {
-    const { getUserEnvironmentKeys } = envOne;
-    if (typeof getUserEnvironmentKeys === 'function') {
-      envKeys = [ ...getUserEnvironmentKeys() ];
-      if (envKeys && Array.isArray(envKeys)) {
-        let envOneData = {};
-        envKeys.forEach(key => {
-          if (key in getProcessEnv()){
-            envOneData[key] =  getProcessEnv()[key];
-          }
-        });
-
-        if (envData) {
-          envData ={ ...envData, ...envOneData };
-        } else {
-          envData = envOneData;
+  if (configOutput) {
+    const envKeys = Object.keys(configOutput || {});
+    if (envKeys.length > 0) {
+      let envOneData = {};
+      envKeys.forEach(key => {
+        if (key in getProcessEnv()){
+          envOneData[key] =  getProcessEnv()[key];
         }
+      });
+
+      if (envData) {
+        envData = { ...envData, ...envOneData };
       } else {
-        logger('Empty response from envData, Can not find any environment keys.');
+        envData = envOneData;
       }
+
     } else {
-      logger('Can not access getUserEnvironmentKeys from envOne. It should be a valid EnvOne package.');
+      logger('Empty response from envData, Can not find any environment keys.');
     }
-  } 
-  
+  }
+
+
   if (envData) {
-    if (exclude) {
-      if (Array.isArray(exclude)) {
-        exclude.forEach(key => {
-          if (key in envData){
-            delete envData[key];
-          }
-        });
-      } else {
-        logger('Invalid type found for "exclude". It should be a valid array.');
-      } 
-    }
+    if (Array.isArray(exclude)) {
+      exclude.forEach(key => {
+        if (key in envData){
+          delete envData[key];
+        }
+      });
+    } else {
+      logger('Invalid type found for "exclude". It should be a valid array.');
+    } 
+    
   
     if (secrets) {
       if (Array.isArray(secrets)) {
-        secrets.forEach(secretKey => {
+        let secretsArray = [ ...secrets ];
+        if (configOutput && configOutput.SECRET_ENVIRONMENT_KEYS && Array.isArray(configOutput.SECRET_ENVIRONMENT_KEYS)) {
+          secretsArray = secretsArray.concat(configOutput.SECRET_ENVIRONMENT_KEYS)
+        }
+        secretsArray.forEach(secretKey => {
           if (secretKey in envData){
             envData[secretKey] = secretFormat(envData[secretKey]);
           }
@@ -257,4 +177,14 @@ function middlewareWrapper(config = {}) {
   return middleware;
 }
 
-module.exports.middlewareWrapper = middlewareWrapper;
+function api(configOutput = {}) {
+  return configureMiddleware({ configOutput });
+}
+
+function getProcessEnv() {
+  return module.exports.retrieveProcessEnv();
+}
+
+module.exports.configure = configureMiddleware;
+module.exports.api = api;
+module.exports.retrieveProcessEnv = getProcessEnvFromUtil;
