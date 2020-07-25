@@ -4,4 +4,4 @@ module.exports = Object.freeze({
   IS_DEBUG_ENABLED: true,
   DEFAULT_AUTH_TOKEN: 'ZLbDGoXOg2sl!K$XOg2sl',
   DEFAULT_API_PATHS: { default: '/env', auth: '/env/auth', dashboard: '/env/dashboard' } 
-})
+});

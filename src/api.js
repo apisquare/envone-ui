@@ -117,7 +117,7 @@ function configureMiddleware(config = {}) {
       if (Array.isArray(secrets)) {
         let secretsArray = [ ...secrets ];
         if (configOutput && configOutput.SECRET_ENVIRONMENT_KEYS && Array.isArray(configOutput.SECRET_ENVIRONMENT_KEYS)) {
-          secretsArray = secretsArray.concat(configOutput.SECRET_ENVIRONMENT_KEYS)
+          secretsArray = secretsArray.concat(configOutput.SECRET_ENVIRONMENT_KEYS);
         }
         secretsArray.forEach(secretKey => {
           if (secretKey in envData){
@@ -191,4 +191,4 @@ function getProcessEnv() {
 
 module.exports.configure = configureMiddleware;
 module.exports.api = api;
-module.exports.retrieveProcessEnv = getProcessEnvFromUtil
+module.exports.retrieveProcessEnv = getProcessEnvFromUtil;
