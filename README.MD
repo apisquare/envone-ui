@@ -81,9 +81,10 @@ app.use(envOneUI.configure({
   | isAuthRequired | Boolean | true | Does Authorization require to access environment dashboard or not |
   | authorizationToken | String | `ZLbDGoXOg2sl!K$XOg2sl` | Authorization token to access dashboard |
   | tokenSecret | String | `8nrkCeHHWwBSxYP3` | Secret value to be used to encode the JWT token |
-  | configOutput | Object | { } | Configured output from `EnvOne` or `Dotenv` |
+  | configOutput | Object | `null` | Configured output from `EnvOne` or `Dotenv` |
+  | defaultApiPath | String | `/env` | Default API Path to access authorization dashboard |
+  | dashboardApiPath | String | `/env/dashboard` | Dashboard path to access environment keys UI | 
   | | |
-
     
 
 ## Screenshots
