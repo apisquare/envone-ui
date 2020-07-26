@@ -1,4 +1,4 @@
-# EnvOne-API
+# EnvOne-UI
 
 Dashboard to review your application's runtime environment variables.
 
