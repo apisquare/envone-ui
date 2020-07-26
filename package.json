@@ -1,7 +1,7 @@
 {
   "name": "envone-ui",
   "version": "0.1.0",
-  "description": "Dashboard to manage your application environment variables",
+  "description": "Dashboard to review your application's runtime environment variables",
   "main": "index.js",
   "keywords": [
     "env",
