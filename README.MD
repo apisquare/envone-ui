@@ -71,22 +71,22 @@ app.use(envOneUI.configure({
   ```
   <b>Note: </b> If you properly configured `.env.config` for secrets, you can avoid `secrets` configuration here. It fetches necessary configurations from the `EnvOne` config output.
 
-# Configuration Rules
+## Configurations
 
-  | Property | Property Type | Default | Description |
+  | Property | Value Type | Default value | Description |
   | -------  | ------------- | ------- | ----------- |
-  | include | Array | [] | Environment keys to be included in the EnvOne-UI |
-  | exclude | Array | [] | Environment keys to be excluded from the EnvOne-UI |
-  | secrets | Array | [] | Environment keys to be indicated as secrets - these values will be partially hidden with `*` character |
+  | include | Array | [ ] | Environment keys to be included in the EnvOne-UI |
+  | exclude | Array | [ ] | Environment keys to be excluded from the EnvOne-UI |
+  | secrets | Array | [ ] | Environment keys to be indicated as secrets - these values will be partially hidden with `*` character |
   | isAuthRequired | Boolean | true | Does Authorization require to access environment dashboard or not |
   | authorizationToken | String | `ZLbDGoXOg2sl!K$XOg2sl` | Authorization token to access dashboard |
   | tokenSecret | String | `8nrkCeHHWwBSxYP3` | Secret value to be used to encode the JWT token |
-  | configOutput | Object | {} | Configured output from `EnvOne` or `Dotenv` |
+  | configOutput | Object | { } | Configured output from `EnvOne` or `Dotenv` |
   | | |
 
     
 
-# Screenshots
+## Screenshots
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/apisquare/envone-ui/master/docs/envone-ui-flow.gif" alt="envone-ui" align="center" />
