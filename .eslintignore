@@ -5,3 +5,4 @@ examples
 test
 src/webapp/node_modules
 src/webapp/dist
+src/dashboard

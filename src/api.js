@@ -8,12 +8,12 @@ const { formatEnvObjects, secretFormat, responseRedirect, signJwtToken, verifyJw
 let IS_AUTH_REQUIRED = true;
 
 const handleBardConfig = {
-  ATTACH_SCRIPT: fs.readFileSync(path.join(__dirname, './webapp/dist/index.bundle.js')),
+  ATTACH_SCRIPT: fs.readFileSync(path.join(__dirname, './dashboard/index.bundle.js')),
   ATTACH_VARS: `const envData=null`
 };
 
 const htmlTemplate = fs
-.readFileSync(path.join(__dirname, './webapp/dist/index.html'))
+.readFileSync(path.join(__dirname, './dashboard/index.html'))
 .toString();
 
 const render = Handlebars.compile(htmlTemplate);
