@@ -80,7 +80,7 @@ function configureMiddleware(config = {}) {
   }
 
   if (configOutput) {
-    const envKeys = Object.keys(configOutput || {});
+    const envKeys = Object.keys(configOutput);
     if (envKeys.length > 0) {
       let envOneData = {};
       envKeys.forEach(key => {
