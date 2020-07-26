@@ -1,4 +1,4 @@
-# EnvOne-UI
+# EnvOne-API
 
 Dashboard to review your application's runtime environment variables.
 
@@ -10,3 +10,8 @@ Dashboard to review your application's runtime environment variables.
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fapisquare%2Fenvone-ui.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fapisquare%2Fenvone-ui?ref=badge_shield)
 
 <img src="https://raw.githubusercontent.com/apisquare/envone-ui/master/docs/envone-ui-flow.gif" alt="envone-ui" align="center" />
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fapisquare%2Fenvone-api.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fapisquare%2Fenvone-api?ref=badge_large)
+=======
+# EnvOne-UI
