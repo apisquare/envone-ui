@@ -9,9 +9,79 @@ Dashboard to review your application's runtime environment variables.
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=apisquare_envone-ui&metric=alert_status)](https://sonarcloud.io/dashboard?id=apisquare_envone-ui)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fapisquare%2Fenvone-ui.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fapisquare%2Fenvone-ui?ref=badge_shield)
 
+## Install
+
+```shell
+# with npm
+npm install envone-ui
+
+# or with Yarn
+yarn add envone-ui
+```
+
+## Usage
+
+### 1. Custom usage
+
+```javascript
+const app = express(); // create express server
+const envOneUI = require('envone-ui'); // import envone-ui
+
+// Configure envOneApi
+app.use(envOneUI.configure({
+    include: ['SERVER_URL', 'DB_USERNAME', 'DB_PASSWORD'],
+    secrets: ['DB_PASSWORD'],
+    isAuthRequired: true,
+  }),
+);
+```
+
+### 2. Use with EnvOne or Dotenv
+
+  1. Configure `EnvOne` properly with your Node.js application to load environment variables from `.env.config` file, or configure `Dotenv` to loan environment variables from `.env`.
+  ```js
+  // Configure EnvOne
+  const configuredEnv = require('envone').config();
+  // Or configure Dotenv
+  const configuredEnv = require('dotenv').config();
+  ```
+
+  2. Pass the configured output from `envone` or `dotenv` as a parameter to `EnvOne-UI` initialization method.
+  ```javascript
+  const app = express(); // create express server
+  const envOneUI = require('envone-ui'); // import envone-ui
+
+  app.use(envOneUI(configuredEnv))
+  ```
+
+  3. If you want to add custom configurations to `EnvOne-UI`, you can use `configure` method,
+  ```javascript
+  const app = express(); // create express serverenvone
+  const envOneUI = require('envone-ui'); // import envone-ui
+
+  // Configure envOneApi
+  app.use(envOneUI.configure({
+      include: ['ENV'],
+      secrets: ['DB_PASSWORD'],
+      exclude: ['ANALYTICS_URL']
+      isAuthRequired: true,
+      configOutput: configuredEnv
+    }),
+  );
+  ```
+  <b>Note: </b> If you properly configured `.env.config` for secrets, you can avoid `secrets` configuration here. It fetches necessary configurations from the `EnvOne` config output.
+
+# Screenshots
+
+<p align="center">
 <img src="https://raw.githubusercontent.com/apisquare/envone-ui/master/docs/envone-ui-flow.gif" alt="envone-ui" align="center" />
+</p>
+
+## Contributions
+
+You can add any suggestions/feature requirements/bugs to the Github issues page : [https://github.com/apisquare/envone-ui/issues](https://github.com/apisquare/envone-ui/issues)
+
+Add your fixes and development changes as pull requests to this [repository](https://github.com/apisquare/envone-ui/pulls).
 
 ## License
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fapisquare%2Fenvone-api.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fapisquare%2Fenvone-api?ref=badge_large)
-=======
-# EnvOne-UI

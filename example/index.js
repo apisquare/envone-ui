@@ -2,7 +2,7 @@
 const express = require('express');
 const envOne = require('envone');
 const bodyParser = require("body-parser");
-const envOneApi = require('../index');
+const envOneUI = require('../index');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -13,9 +13,9 @@ app.use(bodyParser.json());
 // Configure environment variables
 const configuredEnvOne = envOne.config();
 
-// Configure envOneApi
+// Configure envOneUI
 app.use(
-  envOneApi.configure({
+  envOneUI.configure({
     secrets: ['AWS_ACCESS_SECRET', 'DB_CONNECTION_PASSWORD'],
     exclude: ['ANALYTICS_URL'],
     include: ['ENV'],
