@@ -1,6 +1,7 @@
 .github/
-test-server/
+example/
 test/
+webapp/
 .npmignore
 .sonarcloud.properties
 .nycrc
@@ -11,10 +12,3 @@ coverage
 .nyc_output
 coverage.lcov
 *.log
-src/webapp/node_modules
-src/webapp/src
-src/webapp/.babelrc
-src/webapp/package.json
-src/webapp/package-lock.json
-src/webapp/webpack.config.js
-src/webapp/yarn.lock
