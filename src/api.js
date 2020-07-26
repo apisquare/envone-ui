@@ -8,12 +8,12 @@ const { formatEnvObjects, secretFormat, responseRedirect, signJwtToken, verifyJw
 let IS_AUTH_REQUIRED = true;
 
 const handleBardConfig = {
-  ATTACH_SCRIPT: fs.readFileSync(path.join(__dirname, './webapp/dist/index.bundle.js')),
+  ATTACH_SCRIPT: fs.readFileSync(path.join(__dirname, './dashboard/index.bundle.js')),
   ATTACH_VARS: `const envData=null`
 };
 
 const htmlTemplate = fs
-.readFileSync(path.join(__dirname, './webapp/dist/index.html'))
+.readFileSync(path.join(__dirname, './dashboard/index.html'))
 .toString();
 
 const render = Handlebars.compile(htmlTemplate);
@@ -80,7 +80,7 @@ function configureMiddleware(config = {}) {
   }
 
   if (configOutput) {
-    const envKeys = Object.keys(configOutput || {});
+    const envKeys = Object.keys(configOutput);
     if (envKeys.length > 0) {
       let envOneData = {};
       envKeys.forEach(key => {
@@ -117,7 +117,7 @@ function configureMiddleware(config = {}) {
       if (Array.isArray(secrets)) {
         let secretsArray = [ ...secrets ];
         if (configOutput && configOutput.SECRET_ENVIRONMENT_KEYS && Array.isArray(configOutput.SECRET_ENVIRONMENT_KEYS)) {
-          secretsArray = secretsArray.concat(configOutput.SECRET_ENVIRONMENT_KEYS)
+          secretsArray = secretsArray.concat(configOutput.SECRET_ENVIRONMENT_KEYS);
         }
         secretsArray.forEach(secretKey => {
           if (secretKey in envData){

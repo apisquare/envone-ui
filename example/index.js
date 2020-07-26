@@ -1,6 +1,6 @@
 
 const express = require('express');
-const envOne = require('envone')
+const envOne = require('envone');
 const bodyParser = require("body-parser");
 const envOneApi = require('../index');
 
@@ -24,13 +24,8 @@ app.use(
   }),
 );
 
-// Example route throwing requested status code
-app.get('/hello', (req, res) =>
-  res.send("Hello"),
-);
-
-app.get('/', (req, res) => {
-  const response = `<h1 style='text-align: center'> Go to <a href='/env'> /env </a> to check your environment variables </h1>`
+app.get('/*', (req, res) => {
+  const response = `<h1 style='text-align: center'> Go to <a href='/env'> /env </a> to check your environment variables </h1>`;
   res.send(response);
 });
 

@@ -3,5 +3,5 @@ coverage
 .nyc_output
 examples
 test
-src/webapp/node_modules
-src/webapp/dist
+webapp/node_modules
+src/dashboard

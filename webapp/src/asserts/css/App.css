@@ -125,7 +125,7 @@ input {
   border-radius: 4px;
 }
 
-input[type="text"] {
+input[type="text"], input[type="password"] {
   width: 100%;
   padding: 0 0 0 10px;
   margin: 0;
@@ -142,18 +142,16 @@ input[type="text"] {
   text-align: center;
 }
 
-input[type="text"]:focus {
+input[type="text"]:focus, input[type="password"]:focus {
   border-color: #3ca9e2;
 }
 
 input[type="submit"] {
   border: none;
-  display: block;
   background-color: #3ca9e2;
   color: #fff;
   font-weight: bold;
   text-transform: uppercase;
-  cursor: pointer;
   -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;
   font-size: 18px;
