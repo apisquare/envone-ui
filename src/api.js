@@ -49,18 +49,13 @@ function configureMiddleware(config = {}) {
     secrets = [],
     configOutput,
     authorizationToken = DEFAULT_AUTH_TOKEN,
-    apiPath = {},
+    defaultApiPath = DEFAULT_API_PATHS.default,
+    dashboardApiPath = DEFAULT_API_PATHS.dashboard,
     isAuthRequired = true,
     tokenSecret = DEFAULT_TOKEN_SECRET
   } = config; // TODO: Reset envOneCallBack default
 
   IS_AUTH_REQUIRED = isAuthRequired;
-
-  const { 
-    default: DEFAULT_PATH = DEFAULT_API_PATHS.default,
-    auth: AUTH_PATH = DEFAULT_API_PATHS.auth, 
-    dashboard: DASHBOARD_PATH = DEFAULT_API_PATHS.dashboard
-  } = apiPath;
 
   let envData;
 
@@ -140,32 +135,32 @@ function configureMiddleware(config = {}) {
     var ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
     if (!IS_AUTH_REQUIRED) {
-      if (req.method.toUpperCase() === "GET" && req.path === DASHBOARD_PATH) {
+      if (req.method.toUpperCase() === "GET" && req.path === dashboardApiPath) {
         return sendCompiledEnvDashboard(res, envData);
       }
     } else {
       if (req.method.toUpperCase() == "POST") {
-        if (req.path === AUTH_PATH) {
+        if (req.path === DEFAULT_API_PATHS.auth) {
           const { authorization } = req.body;
           if (authorization === authorizationToken) {
-            return responseRedirect(res, `${DASHBOARD_PATH}?token=${signJwtToken(ipAddress, tokenSecret)}`);
+            return responseRedirect(res, `${dashboardApiPath}?token=${signJwtToken(ipAddress, tokenSecret)}`);
           } else {
             return res.status(401).send({ error: 'Invalid token'});
           }
         }
       } else if (req.method.toUpperCase() == "GET") {
-        if (req.path === AUTH_PATH) {
-          return responseRedirect(res, `${DEFAULT_PATH}?error=invalid_session`);
-        } else if (req.path === DEFAULT_PATH) {
+        if (req.path === DEFAULT_API_PATHS.auth) {
+          return responseRedirect(res, `${defaultApiPath}?error=invalid_session`);
+        } else if (req.path === defaultApiPath) {
           handleBardConfig.ATTACH_VARS = `const envData=null`;
           return res.send(render(handleBardConfig));
-        } else if (req.path === DASHBOARD_PATH) {
+        } else if (req.path === dashboardApiPath) {
           const { token } = req.query;
           const { ip } = verifyJwtToken(token, tokenSecret);
           if (ip && ip === ipAddress) {
             return sendCompiledEnvDashboard(res, envData);
           } else {
-            return responseRedirect(res, `${DEFAULT_PATH}?error=invalid_token`);
+            return responseRedirect(res, `${defaultApiPath}?error=invalid_token`);
           }
         }
       }
