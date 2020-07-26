@@ -63,13 +63,28 @@ app.use(envOneUI.configure({
   app.use(envOneUI.configure({
       include: ['ENV'],
       secrets: ['DB_PASSWORD'],
-      exclude: ['ANALYTICS_URL']
+      exclude: ['ANALYTICS_URL'],
       isAuthRequired: true,
       configOutput: configuredEnv
     }),
   );
   ```
   <b>Note: </b> If you properly configured `.env.config` for secrets, you can avoid `secrets` configuration here. It fetches necessary configurations from the `EnvOne` config output.
+
+# Configuration Rules
+
+  | Property | Property Type | Default | Description |
+  | -------  | ------------- | ------- | ----------- |
+  | include | Array | [] | Environment keys to be included in the EnvOne-UI |
+  | exclude | Array | [] | Environment keys to be excluded from the EnvOne-UI |
+  | secrets | Array | [] | Environment keys to be indicated as secrets - these values will be partially hidden with `*` character |
+  | isAuthRequired | Boolean | true | Does Authorization require to access environment dashboard or not |
+  | authorizationToken | String | `ZLbDGoXOg2sl!K$XOg2sl` | Authorization token to access dashboard |
+  | tokenSecret | String | `8nrkCeHHWwBSxYP3` | Secret value to be used to encode the JWT token |
+  | configOutput | Object | {} | Configured output from `EnvOne` or `Dotenv` |
+  | | |
+
+    
 
 # Screenshots
 
