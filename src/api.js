@@ -3,7 +3,14 @@ const path = require('path');
 const Handlebars = require('handlebars');
 const constants = require('./constants');
 const { DEFAULT_TOKEN_SECRET,  DEFAULT_AUTH_TOKEN, DEFAULT_API_PATHS, IS_DEBUG_ENABLED } = constants;
-const { formatEnvObjects, secretFormat, responseRedirect, signJwtToken, verifyJwtToken, getProcessEnv: getProcessEnvFromUtil } = require('./utils');
+const {
+  formatEnvObjects,
+  secretFormat,
+  responseRedirect,
+  signJwtToken,
+  verifyJwtToken,
+  getProcessEnv: getProcessEnvFromUtil
+} = require('./utils');
 
 let IS_AUTH_REQUIRED = true;
 
@@ -53,7 +60,7 @@ function configureMiddleware(config = {}) {
     dashboardApiPath = DEFAULT_API_PATHS.dashboard,
     isAuthRequired = true,
     tokenSecret = DEFAULT_TOKEN_SECRET
-  } = config; // TODO: Reset envOneCallBack default
+  } = config;
 
   IS_AUTH_REQUIRED = isAuthRequired;
 
