@@ -2,7 +2,7 @@
 const express = require('express');
 const envOne = require('envone');
 const bodyParser = require("body-parser");
-const envOneUI = require('../index');
+const envOneUI = require('../../index');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Configure environment variables
-const configuredEnvOne = envOne.config();
+const configuredEnv = envOne.config();
 
 // Configure envOneUI
 app.use(
@@ -20,7 +20,7 @@ app.use(
     exclude: ['ANALYTICS_URL'],
     include: ['ENV'],
     isAuthRequired: true,
-    configOutput: configuredEnvOne
+    configOutput: configuredEnv
   }),
 );
 

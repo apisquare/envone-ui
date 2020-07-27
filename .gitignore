@@ -2,7 +2,7 @@
 
 # dependencies
 /node_modules
-/example/node_modules
+/example/**/node_modules
 /webapp/node_modules
 # webapp/node_modules/
 /.pnp
