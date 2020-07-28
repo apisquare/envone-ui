@@ -30,9 +30,13 @@ let mockResponseStub = {}
 let mockNext = () => {}
 let isNextExecuted = false;
 let retrieveProcessEnvStub;
+let lastResponseStatus = null;
+let lastResponseRedirection = null;
 
 describe("Test EnvOne API methods", () => {
   beforeEach((done) => {
+    lastResponseStatus = null;
+    lastResponseRedirection = null;
     mockRequest = {
       headers: [],
       path: "",
@@ -45,9 +49,15 @@ describe("Test EnvOne API methods", () => {
     }
     mockResponse = {
       send: (data) => data,
-      writeHead: () => {},
+      writeHead: (status, redirectObject) => {
+        lastResponseStatus = status;
+        lastResponseRedirection = redirectObject;
+      },
       end: () => {},
-      status: () => ( { send: () => {} })
+      status: (status) => {
+        lastResponseStatus = status; 
+        return  { send: () => {} }
+      }
     }
     mockResponseStub = {
       send: sinon.spy(mockResponse, "send"),
@@ -455,4 +465,70 @@ describe("Test EnvOne API methods", () => {
     expect(document.getElementById("envOneApi_auth_content")).is.null;
     expect(document.getElementById("envOneApi_env_table")).is.null;
   }).timeout(2000);
+
+  it("should not have any body data when /env/auth API has any issues", async () => {
+    const middleware = envOneApi.configure({
+      include: ["BFF_URL"],
+      tokenSecret: jwtMockSecret,
+      tokenLifeTime: '2ss', // Invalid life time for token
+      authorizationToken: 'mockToken'
+    });
+
+    mockRequest.path = envOneConstants.DEFAULT_API_PATHS.auth;
+    mockRequest.method = "post"
+    mockRequest.body = { authorization: 'mockToken' }
+
+    const htmlMarkup = middleware(mockRequest, mockResponse, mockNext);
+    const document = new jsdom.JSDOM(htmlMarkup, { runScripts: "dangerously" }).window.document;
+    
+    expect(document.body.childElementCount).is.equals(0);
+    expect(document.getElementById("envOneApi_auth_content")).is.null;
+    expect(document.getElementById("envOneApi_env_table")).is.null;
+    expect(lastResponseStatus).is.equals(500);
+  })
+
+  it("should redirect to /env/dashboard, when calling /env/auth with valid token", async () => {
+    const middleware = envOneApi.configure({
+      include: ["BFF_URL"],
+      tokenSecret: jwtMockSecret,
+      tokenLifeTime: 2,
+      authorizationToken: 'mockToken'
+    });
+
+    mockRequest.path = envOneConstants.DEFAULT_API_PATHS.auth;
+    mockRequest.method = "post"
+    mockRequest.body = { authorization: 'mockToken' }
+
+    const htmlMarkup = middleware(mockRequest, mockResponse, mockNext);
+    const document = new jsdom.JSDOM(htmlMarkup, { runScripts: "dangerously" }).window.document;
+    
+    expect(document.body.childElementCount).is.equals(0);
+    expect(lastResponseStatus).is.equals(307);
+    expect(lastResponseRedirection).haveOwnProperty("Location");
+    expect(lastResponseRedirection.Location.split('?')[0]).is.equals(envOneConstants.DEFAULT_API_PATHS.dashboard)
+  })
+
+  it("should work with direct method to configure endpoints", () => {
+    const middleware = envOneApi.api();
+    mockRequest.path = envOneConstants.DEFAULT_API_PATHS.default;
+    expect(isNextExecuted).false;
+    middleware(mockRequest, mockResponse, mockNext);
+    expect(isNextExecuted).false;
+
+    mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
+    expect(isNextExecuted).false;
+    middleware(mockRequest, mockResponse, mockNext);
+    expect(isNextExecuted).false;
+
+    mockRequest.path = envOneConstants.DEFAULT_API_PATHS.auth;
+    expect(isNextExecuted).false;
+    middleware(mockRequest, mockResponse, mockNext);
+    expect(isNextExecuted).false;
+
+    mockRequest.method = "post"
+    mockRequest.path = envOneConstants.DEFAULT_API_PATHS.auth;
+    expect(isNextExecuted).false;
+    middleware(mockRequest, mockResponse, mockNext);
+    expect(isNextExecuted).false;
+  })
 });
