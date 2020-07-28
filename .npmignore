@@ -2,6 +2,7 @@
 example/
 test/
 webapp/
+docs/
 .npmignore
 .sonarcloud.properties
 .nycrc
