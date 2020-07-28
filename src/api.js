@@ -66,7 +66,7 @@ function configureMiddleware(config = {}) {
     dashboardApiPath = DEFAULT_API_PATHS.dashboard,
     isAuthRequired = true,
     tokenSecret = DEFAULT_TOKEN_SECRET,
-    tokenLifeTimeInSec = DEFAULT_TOKEN_LIFE_TIME
+    tokenLifeTime = DEFAULT_TOKEN_LIFE_TIME
   } = config;
 
   IS_AUTH_REQUIRED = isAuthRequired;
@@ -157,7 +157,7 @@ function configureMiddleware(config = {}) {
         if (req.path === DEFAULT_API_PATHS.auth) {
           const { authorization } = req.body;
           if (authorization === authorizationToken) {
-            const token = signJwtToken(ipAddress, tokenSecret, tokenLifeTimeInSec);
+            const token = signJwtToken(ipAddress, tokenSecret, tokenLifeTime);
             if (!token.error) {
               return responseRedirect(res, `${dashboardApiPath}?token=${token}`);
             } else {

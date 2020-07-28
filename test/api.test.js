@@ -431,7 +431,7 @@ describe("Test EnvOne API methods", () => {
     const middleware = envOneApi.configure({
       include: ["BFF_URL"],
       tokenSecret: jwtMockSecret,
-      tokenLifeTimeInSec: 2
+      tokenLifeTime: 2
     });
 
     token = utils.signJwtToken("0.0.0.0", jwtMockSecret, 1);

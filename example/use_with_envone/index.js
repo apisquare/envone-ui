@@ -21,7 +21,7 @@ app.use(
     include: ['ENV'],
     isAuthRequired: true,
     configOutput: configuredEnv,
-    tokenLifeTimeInSec: 60
+    tokenLifeTime: 60
   }),
 );
 
