@@ -20,6 +20,9 @@ const envOneConfigureMockResponse = {
 const envOneSecrets = ['DB_CONNECTION_PASSWORD', 'AWS_ACCESS_SECRET']
 
 const jwtMockSecret = "mockSecret";
+const jwtTokenLifeTime = 10
+
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 let mockRequest = {}
 let mockResponse = {}
@@ -149,7 +152,6 @@ describe("Test EnvOne API methods", () => {
     const htmlMarkup = middleware(mockRequest, mockResponse, mockNext);
     const document = new jsdom.JSDOM(htmlMarkup, { runScripts: "dangerously" }).window.document;
     
-
     expect(document.getElementById("envOneApi_auth_content")).is.null;
     expect(document.getElementById("envOneApi_env_table")).is.not.null;
     expect(document.querySelectorAll('#envOneApi_env_table_row').length).is.equals(1);
@@ -161,7 +163,7 @@ describe("Test EnvOne API methods", () => {
       tokenSecret: jwtMockSecret
     });
     
-    token = utils.signJwtToken("0.0.0.0", jwtMockSecret);
+    token = utils.signJwtToken("0.0.0.0", jwtMockSecret, jwtTokenLifeTime);
     mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
     mockRequest.query = { token }
 
@@ -186,7 +188,7 @@ describe("Test EnvOne API methods", () => {
     
     expect(Object.keys(envOneConfigureMockResponse)).not.contains("SALESFORCE_ADMIN_KEY")
 
-    token = utils.signJwtToken("0.0.0.0", jwtMockSecret);
+    token = utils.signJwtToken("0.0.0.0", jwtMockSecret, jwtTokenLifeTime);
     mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
     mockRequest.query = { token }
 
@@ -211,7 +213,7 @@ describe("Test EnvOne API methods", () => {
     
     expect(Object.keys(envOneConfigureMockResponse)).not.contains("SALESFORCE_ADMIN_KEY")
 
-    token = utils.signJwtToken("0.0.0.0", jwtMockSecret);
+    token = utils.signJwtToken("0.0.0.0", jwtMockSecret, jwtTokenLifeTime);
     mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
     mockRequest.query = { token }
 
@@ -231,7 +233,7 @@ describe("Test EnvOne API methods", () => {
       tokenSecret: jwtMockSecret
     });
 
-    token = utils.signJwtToken("0.0.0.0", jwtMockSecret);
+    token = utils.signJwtToken("0.0.0.0", jwtMockSecret, jwtTokenLifeTime);
     mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
     mockRequest.query = { token }
 
@@ -253,7 +255,7 @@ describe("Test EnvOne API methods", () => {
       tokenSecret: jwtMockSecret
     });
 
-    token = utils.signJwtToken("0.0.0.0", jwtMockSecret);
+    token = utils.signJwtToken("0.0.0.0", jwtMockSecret, jwtTokenLifeTime);
     mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
     mockRequest.query = { token }
 
@@ -283,7 +285,7 @@ describe("Test EnvOne API methods", () => {
       configOutput: envOneConfigureMockResponse
     });
 
-    token = utils.signJwtToken("0.0.0.0", jwtMockSecret);
+    token = utils.signJwtToken("0.0.0.0", jwtMockSecret, jwtTokenLifeTime);
     mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
     mockRequest.query = { token }
 
@@ -303,7 +305,7 @@ describe("Test EnvOne API methods", () => {
       exclude: ["BFF_URL"]
     });
 
-    token = utils.signJwtToken("0.0.0.0", jwtMockSecret);
+    token = utils.signJwtToken("0.0.0.0", jwtMockSecret, jwtTokenLifeTime);
     mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
     mockRequest.query = { token }
 
@@ -323,7 +325,7 @@ describe("Test EnvOne API methods", () => {
       secrets: ["AWS_ACCESS_SECRET"]
     });
 
-    token = utils.signJwtToken("0.0.0.0", jwtMockSecret);
+    token = utils.signJwtToken("0.0.0.0", jwtMockSecret, jwtTokenLifeTime);
     mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
     mockRequest.query = { token }
 
@@ -353,7 +355,7 @@ describe("Test EnvOne API methods", () => {
     
     expect(Object.keys(envOneConfigureMockResponse)).not.contains("SALESFORCE_ADMIN_KEY")
 
-    token = utils.signJwtToken("0.0.0.0", jwtMockSecret);
+    token = utils.signJwtToken("0.0.0.0", jwtMockSecret, jwtTokenLifeTime);
     mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
     mockRequest.query = { token }
 
@@ -374,7 +376,7 @@ describe("Test EnvOne API methods", () => {
     
     expect(Object.keys(envOneConfigureMockResponse)).not.contains("SALESFORCE_ADMIN_KEY")
 
-    token = utils.signJwtToken("0.0.0.0", jwtMockSecret);
+    token = utils.signJwtToken("0.0.0.0", jwtMockSecret, jwtTokenLifeTime);
     mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
     mockRequest.query = { token }
 
@@ -394,7 +396,7 @@ describe("Test EnvOne API methods", () => {
       configOutput: envOneConfigOutput,
     });
 
-    token = utils.signJwtToken("0.0.0.0", jwtMockSecret);
+    token = utils.signJwtToken("0.0.0.0", jwtMockSecret, jwtTokenLifeTime);
     mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
     mockRequest.query = { token }
 
@@ -424,4 +426,33 @@ describe("Test EnvOne API methods", () => {
       expect(renderedSecret[index]).is.equal("*")
     }
   })
+
+  it("should not have any body data when directly calling /dashboard with expired token", async () => {
+    const middleware = envOneApi.configure({
+      include: ["BFF_URL"],
+      tokenSecret: jwtMockSecret,
+      tokenLifeTimeInSec: 2
+    });
+
+    token = utils.signJwtToken("0.0.0.0", jwtMockSecret, 1);
+    mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
+    mockRequest.query = { token }
+
+    let htmlMarkup = middleware(mockRequest, mockResponse, mockNext);
+    let document = new jsdom.JSDOM(htmlMarkup, { runScripts: "dangerously" }).window.document;
+    
+    expect(document.getElementById("envOneApi_auth_content")).is.null;
+    expect(document.getElementById("envOneApi_env_table")).not.null;
+    const selectedTableRows = document.querySelectorAll('#envOneApi_env_table_row')
+    expect(selectedTableRows.length).is.equals(1);
+
+    await new Promise((r) => setTimeout(r, 1500));
+
+    htmlMarkup = middleware(mockRequest, mockResponse, mockNext);
+    document = new jsdom.JSDOM(htmlMarkup, { runScripts: "dangerously" }).window.document;
+
+    expect(document.body.childElementCount).is.equals(0);
+    expect(document.getElementById("envOneApi_auth_content")).is.null;
+    expect(document.getElementById("envOneApi_env_table")).is.null;
+  }).timeout(2000);
 });

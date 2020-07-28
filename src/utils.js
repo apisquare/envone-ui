@@ -48,12 +48,16 @@ function responseRedirect(res, relativePath) {
  * Sign JWT token with given ip address
  * @param {*} ipAddress 
  */
-function signJwtToken(ipAddress, jwtSecret) {
-  const token = jwt.sign({
-    ip: ipAddress,
-    time: Date.now()
-  }, jwtSecret, { expiresIn: '3s' });
-  return token;
+function signJwtToken(ipAddress, jwtSecret, tokenLifeTimeInSec) {
+  try {
+    const token = jwt.sign({
+      ip: ipAddress,
+      time: Date.now()
+    }, jwtSecret, { expiresIn: tokenLifeTimeInSec });
+    return token;
+  } catch (e) {
+    return { error: e.message };
+  }
 }
 
 /**

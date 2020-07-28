@@ -2,7 +2,13 @@ const fs = require('fs');
 const path = require('path');
 const Handlebars = require('handlebars');
 const constants = require('./constants');
-const { DEFAULT_TOKEN_SECRET,  DEFAULT_AUTH_TOKEN, DEFAULT_API_PATHS, IS_DEBUG_ENABLED } = constants;
+const {
+  DEFAULT_TOKEN_SECRET, 
+  DEFAULT_AUTH_TOKEN,
+  DEFAULT_API_PATHS,
+  IS_DEBUG_ENABLED,
+  DEFAULT_TOKEN_LIFE_TIME
+ } = constants;
 const {
   formatEnvObjects,
   secretFormat,
@@ -59,7 +65,8 @@ function configureMiddleware(config = {}) {
     defaultApiPath = DEFAULT_API_PATHS.default,
     dashboardApiPath = DEFAULT_API_PATHS.dashboard,
     isAuthRequired = true,
-    tokenSecret = DEFAULT_TOKEN_SECRET
+    tokenSecret = DEFAULT_TOKEN_SECRET,
+    tokenLifeTimeInSec = DEFAULT_TOKEN_LIFE_TIME
   } = config;
 
   IS_AUTH_REQUIRED = isAuthRequired;
@@ -150,7 +157,12 @@ function configureMiddleware(config = {}) {
         if (req.path === DEFAULT_API_PATHS.auth) {
           const { authorization } = req.body;
           if (authorization === authorizationToken) {
-            return responseRedirect(res, `${dashboardApiPath}?token=${signJwtToken(ipAddress, tokenSecret)}`);
+            const token = signJwtToken(ipAddress, tokenSecret, tokenLifeTimeInSec);
+            if (!token.error) {
+              return responseRedirect(res, `${dashboardApiPath}?token=${token}`);
+            } else {
+              return res.status(500).send({ error: 'Can not generate token'});
+            }
           } else {
             return res.status(401).send({ error: 'Invalid token'});
           }
@@ -162,6 +174,7 @@ function configureMiddleware(config = {}) {
           handleBardConfig.ATTACH_VARS = `const envData=null`;
           return res.send(render(handleBardConfig));
         } else if (req.path === dashboardApiPath) {
+          
           const { token } = req.query;
           const { ip } = verifyJwtToken(token, tokenSecret);
           if (ip && ip === ipAddress) {

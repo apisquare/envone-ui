@@ -84,17 +84,36 @@ describe("Test EnvOne API utility methods", () => {
   });
 
   it("should verify return error if the secret is different", () => {
-    const token = envOneApiUtils.signJwtToken("0.0.0.0", "mockSecret1")
+    const token = envOneApiUtils.signJwtToken("0.0.0.0", "mockSecret1", 10)
     const result = envOneApiUtils.verifyJwtToken(token, "mockSecret2");
     expect(result).not.undefined;
     expect(result).haveOwnProperty("error")
   });
 
+  it("should verify return error if the secret is expired", async () => {
+    const token = envOneApiUtils.signJwtToken("0.0.0.0", "mockSecret1", 1)
+    let result = envOneApiUtils.verifyJwtToken(token, "mockSecret1");
+    expect(result).is.not.undefined;
+    expect(result).is.not.haveOwnProperty("error")
+
+    await new Promise((r) => setTimeout(r, 1500));
+
+    result = envOneApiUtils.verifyJwtToken(token, "mockSecret1");
+    expect(result).is.not.undefined;
+    expect(result).is.haveOwnProperty("error")
+  }).timeout(2500);
+
   it("should verify return valid object if the token is valid", () => {
-    const token = envOneApiUtils.signJwtToken("0.0.0.0", "mockSecret")
+    const token = envOneApiUtils.signJwtToken("0.0.0.0", "mockSecret", 10)
     const result = envOneApiUtils.verifyJwtToken(token, "mockSecret");
     expect(result).not.undefined;
     expect(result).not.haveOwnProperty("error")
+  });
+
+  it("should return error if lifeTime value is invalid", () => {
+    const result = envOneApiUtils.signJwtToken("0.0.0.0", "mockSecret", "a");
+    expect(result).not.undefined;
+    expect(result).haveOwnProperty("error")
   });
 
   it("should have proper process environments", () => {
