@@ -8,21 +8,21 @@ const envOneApi = require('../src/api');
 const envOneConstants = require('../src/constants');
 
 const envOneConfigureMockResponse = {
-  BFF_URL: 'http://mock-server/api/v1',
-  SALESFORCE_URL: 'https://dev-salesforce.com/v1/test',
-  AWS_ACCESS_KEY: 'w5Dty3EaFi983etw',
-  AWS_ACCESS_SECRET: 'jQACONG$45APjQACONG$45AP',
-  DB_CONNECTION_URL: 'https://dev-service-xyz-dev.xyx.dev-mongo.com',
-  DB_CONNECTION_PASSWORD: 'w5Dty3EaFi983etw',
-  ANALYTICS_URL: 'https://analytics.dev-services.com/',
-  CONTACT_US_EMAIL: 'hello-dev@abcd.com'
+  parsed: {
+    BFF_URL: 'http://mock-server/api/v1',
+    SALESFORCE_URL: 'https://dev-salesforce.com/v1/test',
+    AWS_ACCESS_KEY: 'w5Dty3EaFi983etw',
+    AWS_ACCESS_SECRET: 'jQACONG$45APjQACONG$45AP',
+    DB_CONNECTION_URL: 'https://dev-service-xyz-dev.xyx.dev-mongo.com',
+    DB_CONNECTION_PASSWORD: 'w5Dty3EaFi983etw',
+    ANALYTICS_URL: 'https://analytics.dev-services.com/',
+    CONTACT_US_EMAIL: 'hello-dev@abcd.com'
+  }
 }
 const envOneSecrets = ['DB_CONNECTION_PASSWORD', 'AWS_ACCESS_SECRET']
 
 const jwtMockSecret = "mockSecret";
 const jwtTokenLifeTime = 10
-
-const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 let mockRequest = {}
 let mockResponse = {}
@@ -68,7 +68,7 @@ describe("Test EnvOne API methods", () => {
     isNextExecuted = false;
     mockNext = () => isNextExecuted = true;
 
-    retrieveProcessEnvStub = sinon.stub(envOneApi, 'retrieveProcessEnv').returns(envOneConfigureMockResponse);
+    retrieveProcessEnvStub = sinon.stub(envOneApi, 'retrieveProcessEnv').returns(envOneConfigureMockResponse.parsed);
     done()
   });
 
@@ -185,9 +185,9 @@ describe("Test EnvOne API methods", () => {
     const selectedTableRows = document.querySelectorAll('#envOneApi_env_table_row')
     expect(selectedTableRows.length).is.equals(2);
     expect(selectedTableRows[0].children[0].textContent).is.equals("BFF_URL")
-    expect(selectedTableRows[0].children[1].textContent).is.equals(envOneConfigureMockResponse.BFF_URL)
+    expect(selectedTableRows[0].children[1].textContent).is.equals(envOneConfigureMockResponse.parsed.BFF_URL)
     expect(selectedTableRows[1].children[0].textContent).is.equals("SALESFORCE_URL")
-    expect(selectedTableRows[1].children[1].textContent).is.equals(envOneConfigureMockResponse.SALESFORCE_URL)
+    expect(selectedTableRows[1].children[1].textContent).is.equals(envOneConfigureMockResponse.parsed.SALESFORCE_URL)
   })
 
   it("should not render any keys in `include` if those are not available in process.env", () => {
@@ -196,7 +196,7 @@ describe("Test EnvOne API methods", () => {
       tokenSecret: jwtMockSecret
     });
     
-    expect(Object.keys(envOneConfigureMockResponse)).not.contains("SALESFORCE_ADMIN_KEY")
+    expect(Object.keys(envOneConfigureMockResponse.parsed)).not.contains("SALESFORCE_ADMIN_KEY")
 
     token = utils.signJwtToken("0.0.0.0", jwtMockSecret, jwtTokenLifeTime);
     mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
@@ -210,9 +210,9 @@ describe("Test EnvOne API methods", () => {
     const selectedTableRows = document.querySelectorAll('#envOneApi_env_table_row')
     expect(selectedTableRows.length).is.equals(2);
     expect(selectedTableRows[0].children[0].textContent).is.equals("BFF_URL")
-    expect(selectedTableRows[0].children[1].textContent).is.equals(envOneConfigureMockResponse.BFF_URL)
+    expect(selectedTableRows[0].children[1].textContent).is.equals(envOneConfigureMockResponse.parsed.BFF_URL)
     expect(selectedTableRows[1].children[0].textContent).is.equals("SALESFORCE_URL")
-    expect(selectedTableRows[1].children[1].textContent).is.equals(envOneConfigureMockResponse.SALESFORCE_URL)
+    expect(selectedTableRows[1].children[1].textContent).is.equals(envOneConfigureMockResponse.parsed.SALESFORCE_URL)
   })
 
   it("should not render any content from `include`, if `include` is not an array", () => {
@@ -221,7 +221,7 @@ describe("Test EnvOne API methods", () => {
       tokenSecret: jwtMockSecret
     });
     
-    expect(Object.keys(envOneConfigureMockResponse)).not.contains("SALESFORCE_ADMIN_KEY")
+    expect(Object.keys(envOneConfigureMockResponse.parsed)).not.contains("SALESFORCE_ADMIN_KEY")
 
     token = utils.signJwtToken("0.0.0.0", jwtMockSecret, jwtTokenLifeTime);
     mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
@@ -255,7 +255,7 @@ describe("Test EnvOne API methods", () => {
     const selectedTableRows = document.querySelectorAll('#envOneApi_env_table_row')
     expect(selectedTableRows.length).is.equals(1);
     expect(selectedTableRows[0].children[0].textContent).is.equals("BFF_URL")
-    expect(selectedTableRows[0].children[1].textContent).is.equals(envOneConfigureMockResponse.BFF_URL)
+    expect(selectedTableRows[0].children[1].textContent).is.equals(envOneConfigureMockResponse.parsed.BFF_URL)
   })
 
   it("should render keys from `exclude` properly with hidden letters", () => {
@@ -277,12 +277,12 @@ describe("Test EnvOne API methods", () => {
     const selectedTableRows = document.querySelectorAll('#envOneApi_env_table_row')
     expect(selectedTableRows.length).is.equals(2);
     expect(selectedTableRows[0].children[0].textContent).is.equals("BFF_URL")
-    expect(selectedTableRows[0].children[1].textContent).is.equals(envOneConfigureMockResponse.BFF_URL)
+    expect(selectedTableRows[0].children[1].textContent).is.equals(envOneConfigureMockResponse.parsed.BFF_URL)
     expect(selectedTableRows[1].children[0].textContent).is.equals("AWS_ACCESS_SECRET")
     const renderedSecret = selectedTableRows[1].children[1].textContent;
-    expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.AWS_ACCESS_SECRET)
+    expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.parsed.AWS_ACCESS_SECRET)
     expect(renderedSecret.length).is.greaterThan(2);
-    expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.AWS_ACCESS_SECRET[0])
+    expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.parsed.AWS_ACCESS_SECRET[0])
     for(let index = 1; index < renderedSecret.length; index++) {
       expect(renderedSecret[index]).is.equal("*")
     }
@@ -305,7 +305,7 @@ describe("Test EnvOne API methods", () => {
     expect(document.getElementById("envOneApi_auth_content")).is.null;
     expect(document.getElementById("envOneApi_env_table")).not.null;
     const selectedTableRows = document.querySelectorAll('#envOneApi_env_table_row')
-    expect(selectedTableRows.length).is.equals(Object.keys(envOneConfigureMockResponse).length);
+    expect(selectedTableRows.length).is.equals(Object.keys(envOneConfigureMockResponse.parsed).length);
   })
 
   it("should process `configOutput` properly, and avoid keys from `exclude` when render dashboard", () => {
@@ -325,7 +325,7 @@ describe("Test EnvOne API methods", () => {
     expect(document.getElementById("envOneApi_auth_content")).is.null;
     expect(document.getElementById("envOneApi_env_table")).not.null;
     const selectedTableRows = document.querySelectorAll('#envOneApi_env_table_row')
-    expect(selectedTableRows.length).is.equals(Object.keys(envOneConfigureMockResponse).length - 1);
+    expect(selectedTableRows.length).is.equals(Object.keys(envOneConfigureMockResponse.parsed).length - 1);
   })
 
   it("should process `configOutput` properly, and render `secrets` properly", () => {
@@ -345,13 +345,13 @@ describe("Test EnvOne API methods", () => {
     expect(document.getElementById("envOneApi_auth_content")).is.null;
     expect(document.getElementById("envOneApi_env_table")).not.null;
     const selectedTableRows = document.querySelectorAll('#envOneApi_env_table_row')
-    expect(selectedTableRows.length).is.equals(Object.keys(envOneConfigureMockResponse).length);
+    expect(selectedTableRows.length).is.equals(Object.keys(envOneConfigureMockResponse.parsed).length);
 
     expect(selectedTableRows[3].children[0].textContent).is.equals("AWS_ACCESS_SECRET")
     const renderedSecret = selectedTableRows[3].children[1].textContent;
-    expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.AWS_ACCESS_SECRET)
+    expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.parsed.AWS_ACCESS_SECRET)
     expect(renderedSecret.length).is.greaterThan(2);
-    expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.AWS_ACCESS_SECRET[0])
+    expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.parsed.AWS_ACCESS_SECRET[0])
     for(let index = 1; index < renderedSecret.length; index++) {
       expect(renderedSecret[index]).is.equal("*")
     }
@@ -363,7 +363,7 @@ describe("Test EnvOne API methods", () => {
       tokenSecret: jwtMockSecret
     });
     
-    expect(Object.keys(envOneConfigureMockResponse)).not.contains("SALESFORCE_ADMIN_KEY")
+    expect(Object.keys(envOneConfigureMockResponse.parsed)).not.contains("SALESFORCE_ADMIN_KEY")
 
     token = utils.signJwtToken("0.0.0.0", jwtMockSecret, jwtTokenLifeTime);
     mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
@@ -384,7 +384,7 @@ describe("Test EnvOne API methods", () => {
       tokenSecret: jwtMockSecret
     });
     
-    expect(Object.keys(envOneConfigureMockResponse)).not.contains("SALESFORCE_ADMIN_KEY")
+    expect(Object.keys(envOneConfigureMockResponse.parsed)).not.contains("SALESFORCE_ADMIN_KEY")
 
     token = utils.signJwtToken("0.0.0.0", jwtMockSecret, jwtTokenLifeTime);
     mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
@@ -416,22 +416,22 @@ describe("Test EnvOne API methods", () => {
     expect(document.getElementById("envOneApi_auth_content")).is.null;
     expect(document.getElementById("envOneApi_env_table")).not.null;
     const selectedTableRows = document.querySelectorAll('#envOneApi_env_table_row')
-    expect(selectedTableRows.length).is.equals(Object.keys(envOneConfigureMockResponse).length);
+    expect(selectedTableRows.length).is.equals(Object.keys(envOneConfigureMockResponse.parsed).length);
 
     expect(selectedTableRows[3].children[0].textContent).is.equals("AWS_ACCESS_SECRET")
     let renderedSecret = selectedTableRows[3].children[1].textContent;
-    expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.AWS_ACCESS_SECRET)
+    expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.parsed.AWS_ACCESS_SECRET)
     expect(renderedSecret.length).is.greaterThan(2);
-    expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.AWS_ACCESS_SECRET[0])
+    expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.parsed.AWS_ACCESS_SECRET[0])
     for(let index = 1; index < renderedSecret.length; index++) {
       expect(renderedSecret[index]).is.equal("*")
     }
 
     expect(selectedTableRows[5].children[0].textContent).is.equals("DB_CONNECTION_PASSWORD")
     renderedSecret = selectedTableRows[5].children[1].textContent;
-    expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.DB_CONNECTION_PASSWORD)
+    expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.parsed.DB_CONNECTION_PASSWORD)
     expect(renderedSecret.length).is.greaterThan(2);
-    expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.DB_CONNECTION_PASSWORD[0])
+    expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.parsed.DB_CONNECTION_PASSWORD[0])
     for(let index = 1; index < renderedSecret.length; index++) {
       expect(renderedSecret[index]).is.equal("*")
     }
@@ -455,23 +455,23 @@ describe("Test EnvOne API methods", () => {
     expect(document.getElementById("envOneApi_auth_content")).is.null;
     expect(document.getElementById("envOneApi_env_table")).not.null;
     const selectedTableRows = document.querySelectorAll('#envOneApi_env_table_row')
-    expect(selectedTableRows.length).is.equals(Object.keys(envOneConfigureMockResponse).length);
+    expect(selectedTableRows.length).is.equals(Object.keys(envOneConfigureMockResponse.parsed).length);
 
     expect(selectedTableRows[0].children[0].textContent).is.equals("BFF_URL")
-    expect(selectedTableRows[0].children[1].textContent).is.equals(envOneConfigureMockResponse.BFF_URL)
+    expect(selectedTableRows[0].children[1].textContent).is.equals(envOneConfigureMockResponse.parsed.BFF_URL)
 
     expect(selectedTableRows[3].children[0].textContent).is.equals("AWS_ACCESS_SECRET")
     let renderedSecret = selectedTableRows[3].children[1].textContent;
-    expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.AWS_ACCESS_SECRET)
-    expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.AWS_ACCESS_SECRET[0])
+    expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.parsed.AWS_ACCESS_SECRET)
+    expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.parsed.AWS_ACCESS_SECRET[0])
     for(let index = 1; index < renderedSecret.length; index++) {
       expect(renderedSecret[index]).is.equal("*")
     }
 
     expect(selectedTableRows[5].children[0].textContent).is.equals("DB_CONNECTION_PASSWORD")
     renderedSecret = selectedTableRows[5].children[1].textContent;
-    expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.DB_CONNECTION_PASSWORD)
-    expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.DB_CONNECTION_PASSWORD[0])
+    expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.parsed.DB_CONNECTION_PASSWORD)
+    expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.parsed.DB_CONNECTION_PASSWORD[0])
     for(let index = 1; index < renderedSecret.length; index++) {
       expect(renderedSecret[index]).is.equal("*")
     }

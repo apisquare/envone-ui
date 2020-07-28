@@ -89,23 +89,26 @@ function configureMiddleware(config = {}) {
   }
 
   if (configOutput) {
-    const envKeys = Object.keys(configOutput);
-    if (envKeys.length > 0) {
-      let envOneData = {};
-      envKeys.forEach(key => {
-        if (key in getProcessEnv()){
-          envOneData[key] =  getProcessEnv()[key];
+    if (configOutput.parsed) {
+      const envKeys = Object.keys(configOutput.parsed);
+      if (envKeys.length > 0) {
+        let envOneData = {};
+        envKeys.forEach(key => {
+          if (key in getProcessEnv()){
+            envOneData[key] =  getProcessEnv()[key];
+          }
+        });
+  
+        if (envData) {
+          envData = { ...envData, ...envOneData };
+        } else {
+          envData = envOneData;
         }
-      });
-
-      if (envData) {
-        envData = { ...envData, ...envOneData };
       } else {
-        envData = envOneData;
+        logger('Empty response from parsed data, Can not find any environment keys.');
       }
-
     } else {
-      logger('Empty response from envData, Can not find any environment keys.');
+      logger('Can not find any parsed data from configOutput.');
     }
   }
 
