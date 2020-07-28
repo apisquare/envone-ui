@@ -122,21 +122,24 @@ function configureMiddleware(config = {}) {
     } 
     
   
+    let secretsArray = [];
+    if (configOutput && configOutput.SECRET_ENVIRONMENT_KEYS && Array.isArray(configOutput.SECRET_ENVIRONMENT_KEYS)) {
+      secretsArray = secretsArray.concat(configOutput.SECRET_ENVIRONMENT_KEYS);
+    }
+
     if (secrets) {
       if (Array.isArray(secrets)) {
-        let secretsArray = [ ...secrets ];
-        if (configOutput && configOutput.SECRET_ENVIRONMENT_KEYS && Array.isArray(configOutput.SECRET_ENVIRONMENT_KEYS)) {
-          secretsArray = secretsArray.concat(configOutput.SECRET_ENVIRONMENT_KEYS);
-        }
-        secretsArray.forEach(secretKey => {
-          if (secretKey in envData){
-            envData[secretKey] = secretFormat(envData[secretKey]);
-          }
-        });
+        secretsArray = secretsArray.concat(secrets);
       } else {
         logger('Invalid type found for "secrets". It should be a valid array.');
       } 
     }
+
+    secretsArray.forEach(secretKey => {
+      if (secretKey in envData){
+        envData[secretKey] = secretFormat(envData[secretKey]);
+      }
+    });
   }
 
   /**

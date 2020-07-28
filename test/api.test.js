@@ -437,6 +437,46 @@ describe("Test EnvOne API methods", () => {
     }
   })
 
+  it("should hide the secrets from configOutput even secrets configuration has any issues", () => {
+    const envOneConfigOutput = { ...envOneConfigureMockResponse, SECRET_ENVIRONMENT_KEYS: envOneSecrets}
+    const middleware = envOneApi.configure({
+      tokenSecret: jwtMockSecret,
+      configOutput: envOneConfigOutput,
+      secrets: { "BFF_URL": "" }
+    });
+
+    token = utils.signJwtToken("0.0.0.0", jwtMockSecret, jwtTokenLifeTime);
+    mockRequest.path = envOneConstants.DEFAULT_API_PATHS.dashboard;
+    mockRequest.query = { token }
+
+    const htmlMarkup = middleware(mockRequest, mockResponse, mockNext);
+    const document = new jsdom.JSDOM(htmlMarkup, { runScripts: "dangerously" }).window.document;
+    
+    expect(document.getElementById("envOneApi_auth_content")).is.null;
+    expect(document.getElementById("envOneApi_env_table")).not.null;
+    const selectedTableRows = document.querySelectorAll('#envOneApi_env_table_row')
+    expect(selectedTableRows.length).is.equals(Object.keys(envOneConfigureMockResponse).length);
+
+    expect(selectedTableRows[0].children[0].textContent).is.equals("BFF_URL")
+    expect(selectedTableRows[0].children[1].textContent).is.equals(envOneConfigureMockResponse.BFF_URL)
+
+    expect(selectedTableRows[3].children[0].textContent).is.equals("AWS_ACCESS_SECRET")
+    let renderedSecret = selectedTableRows[3].children[1].textContent;
+    expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.AWS_ACCESS_SECRET)
+    expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.AWS_ACCESS_SECRET[0])
+    for(let index = 1; index < renderedSecret.length; index++) {
+      expect(renderedSecret[index]).is.equal("*")
+    }
+
+    expect(selectedTableRows[5].children[0].textContent).is.equals("DB_CONNECTION_PASSWORD")
+    renderedSecret = selectedTableRows[5].children[1].textContent;
+    expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.DB_CONNECTION_PASSWORD)
+    expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.DB_CONNECTION_PASSWORD[0])
+    for(let index = 1; index < renderedSecret.length; index++) {
+      expect(renderedSecret[index]).is.equal("*")
+    }
+  })
+
   it("should not have any body data when directly calling /dashboard with expired token", async () => {
     const middleware = envOneApi.configure({
       include: ["BFF_URL"],
