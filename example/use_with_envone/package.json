@@ -2,6 +2,7 @@
   "name": "env-api-example-with-envone",
   "version": "0.1.0",
   "description": "Examples",
+  "private": true,
   "main": "index.js",
   "author": "",
   "contributors": [],

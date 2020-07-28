@@ -2,6 +2,7 @@
   "name": "env-api-example-with-dotenv",
   "version": "0.1.0",
   "description": "Examples",
+  "private": true,
   "main": "index.js",
   "author": "",
   "contributors": [],
