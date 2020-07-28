@@ -1,8 +1,8 @@
 
 const express = require('express');
-const envOne = require('envone');
 const bodyParser = require("body-parser");
-const envOneUI = require('../../index');
+const envOne = require('envone');
+const envOneUI = require('envone-ui');
 
 const app = express();
 const port = process.env.PORT || 3000;

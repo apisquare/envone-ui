@@ -5,9 +5,7 @@
 
 ### Default configuration
 
-
 ```js
-
 const express = require('express');
 const bodyParser = require("body-parser");
 const envone = require('envone');
@@ -28,7 +26,6 @@ app.use(envOneUI(configuredEnv));
 ### Custom configuration
 
 ```js
-
 const express = require('express');
 const bodyParser = require("body-parser");
 const envone = require('envone');
