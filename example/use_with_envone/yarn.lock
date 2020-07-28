@@ -104,10 +104,10 @@ encodeurl@~1.0.2:
   resolved "https://registry.yarnpkg.com/encodeurl/-/encodeurl-1.0.2.tgz#ad3ff4c86ec2d029322f5a02c3a9a606c95b3f59"
   integrity sha1-rT/0yG7C0CkyL1oCw6mmBslbP1k=
 
-envone@^0.4.1:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/envone/-/envone-0.4.1.tgz#c2f4584d1c941bda7abc338e49ebc875e469a94d"
-  integrity sha512-mudY4n+xXMC5OmlegN5T9sr3/ysV66DdVUbxmNRsQFtdby9YCVMSFrGa0pURDToctrbO3cvoCnBOMhqPIEkWKw==
+envone@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/envone/-/envone-0.5.0.tgz#68570d8893a32b55694224f43600f6a15bc2336e"
+  integrity sha512-+R6Mm/A2rBPEG1ySg/xfM0wvH8GJxZkOPY2SOZka22YvfrnKkLgzJGO6jkRrsKBK6yEccdZk7n6PbufdZL63jg==
 
 escape-html@~1.0.3:
   version "1.0.3"
