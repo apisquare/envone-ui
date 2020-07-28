@@ -71,6 +71,11 @@ app.use(envOneUI.configure({
   ```
   <b>Note: </b> If you properly configured `.env.config` for secrets, you can avoid `secrets` configuration here. It fetches necessary configurations from the `EnvOne` config output.
 
+### Example Projects
+
+1. [Configured EnvOne-UI with EnvOne](https://github.com/apisquare/envone-ui/tree/master/example/use_with_dotenv)
+2. [Configured EnvOne-UI with Dotenv](https://github.com/apisquare/envone-ui/tree/master/example/use_with_envone)
+
 ## Configurations
 
   | Property | Value Type | Default value | Description |

@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 // Configure environment variables
 const configuredEnv = envOne.config();
 
-// Configure envOneUI
+// Configure envOneUI with custom properties
 app.use(
   envOneUI.configure({
     secrets: ['AWS_ACCESS_SECRET', 'DB_CONNECTION_PASSWORD'],
@@ -24,6 +24,9 @@ app.use(
     tokenLifeTime: 60
   }),
 );
+
+// Configure envOneUI with default properties
+app.use(envOneUI(configuredEnv));
 
 app.get('/*', (req, res) => {
   const response = `<h1 style='text-align: center'> Go to <a href='/env'> /env </a> to check your environment variables </h1>`;
