@@ -20,7 +20,7 @@ app.use(
     exclude: ['ANALYTICS_URL'],
     include: ['ENV'],
     isAuthRequired: true,
-    configOutput: configuredEnv,
+    configOutput: { parsed: configuredEnv },
     tokenLifeTime: 60
   }),
 );
