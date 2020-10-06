@@ -20,7 +20,7 @@ const {
 
 let IS_AUTH_REQUIRED = true;
 
-const handleBardConfig = {
+const handleBarsConfig = {
   ATTACH_SCRIPT: fs.readFileSync(path.join(__dirname, './dashboard/index.bundle.js')),
   ATTACH_VARS: `const envData=null`
 };
@@ -47,8 +47,8 @@ function logger (message) {
  * @param {*} res 
  */
 function sendCompiledEnvDashboard(res, envData) {
-  handleBardConfig.ATTACH_VARS = `const envData=${JSON.stringify(formatEnvObjects(envData))}`;
-  return res.send(render(handleBardConfig));
+  handleBarsConfig.ATTACH_VARS = `const envData=${JSON.stringify(formatEnvObjects(envData))}`;
+  return res.send(render(handleBarsConfig));
 }
 
 /**
@@ -177,8 +177,8 @@ function configureMiddleware(config = {}) {
         if (req.path === DEFAULT_API_PATHS.auth) {
           return responseRedirect(res, `${defaultApiPath}?error=invalid_session`);
         } else if (req.path === defaultApiPath) {
-          handleBardConfig.ATTACH_VARS = `const envData=null`;
-          return res.send(render(handleBardConfig));
+          handleBarsConfig.ATTACH_VARS = `const envData=null`;
+          return res.send(render(handleBarsConfig));
         } else if (req.path === dashboardApiPath) {
           
           const { token } = req.query;
