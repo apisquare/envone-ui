@@ -1,6 +1,7 @@
 import React from 'react';
 import './asserts/css/App.css';
-
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+import { FaCopy } from 'react-icons/fa';
 // eslint-disable-next-line
 const documentEnvData = envData;
 const originUrl = window.location ? window.location.origin : null;
@@ -40,7 +41,13 @@ class App extends React.Component {
       const tableRows = environmentConfig.map(envConfig => 
         <tr key={envConfig.key} id="envOneApi_env_table_row">
           <td data-label="Key">{envConfig.key}</td>
-          <td data-label="Value">{envConfig.value}</td>
+          <td data-label="Value">{envConfig.value}
+          <CopyToClipboard text={envConfig.value}>
+          <span>
+            <FaCopy/>
+          </span>
+        </CopyToClipboard>
+          </td>
         </tr>
       );
       return tableRows;  
