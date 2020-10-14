@@ -51,6 +51,56 @@ table th {
 
 table td:last-child {
   text-align: left;
+  display: "flex";
+  justify-content: "space-between";
+}
+
+.copy_button {
+  border: none;
+  outline: none;
+  height: 50px;
+  width: 50px;
+  position: relative;
+  background-color: inherit;
+  cursor: pointer;
+}
+
+.copy_button:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 25px;
+  transition-duration: 0.4s;
+}
+
+.copy_button:after {
+  content: "";
+  background-color: gray;
+  border-radius: 25px;
+  display: block;
+  position: absolute;
+  height: 50px;
+  width: 50px;
+  top: -2px;
+  left: -1px;
+  opacity: 0;
+  transition: all 0.8s;
+}
+
+.copy_button:active:after {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  height: 0px;
+  width: 0px;
+  opacity: 1;
+  transition: 0s;
+}
+
+table td:last-child .clipboard_button {
+  visibility: hidden;
+}
+
+table td:last-child:hover .clipboard_button {
+  visibility: visible;
 }
 
 @media screen and (max-width: 600px) {
@@ -96,11 +146,13 @@ table td:last-child {
   table td:last-child {
     border-bottom: 0;
     text-align: right;
+    display: flex;
+    align-items: center;
   }
 
   table th,
   table td {
-  border-right: 0;
+    border-right: 0;
   }
 
   .content {
@@ -125,7 +177,8 @@ input {
   border-radius: 4px;
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"],
+input[type="password"] {
   width: 100%;
   padding: 0 0 0 10px;
   margin: 0;
@@ -134,15 +187,16 @@ input[type="text"], input[type="password"] {
   font-style: normal;
   font-size: 16px;
   -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   position: relative;
   display: inline-block;
   background: none;
   text-align: center;
 }
 
-input[type="text"]:focus, input[type="password"]:focus {
+input[type="text"]:focus,
+input[type="password"]:focus {
   border-color: #3ca9e2;
 }
 

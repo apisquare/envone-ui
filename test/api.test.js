@@ -185,9 +185,9 @@ describe("Test EnvOne API methods", () => {
     const selectedTableRows = document.querySelectorAll('#envOneApi_env_table_row')
     expect(selectedTableRows.length).is.equals(2);
     expect(selectedTableRows[0].children[0].textContent).is.equals("BFF_URL")
-    expect(selectedTableRows[0].children[1].textContent).is.equals(envOneConfigureMockResponse.parsed.BFF_URL)
+    expect(selectedTableRows[0].children[1].children[0].textContent).is.equals(envOneConfigureMockResponse.parsed.BFF_URL)
     expect(selectedTableRows[1].children[0].textContent).is.equals("SALESFORCE_URL")
-    expect(selectedTableRows[1].children[1].textContent).is.equals(envOneConfigureMockResponse.parsed.SALESFORCE_URL)
+    expect(selectedTableRows[1].children[1].children[0].textContent).is.equals(envOneConfigureMockResponse.parsed.SALESFORCE_URL)
   })
 
   it("should not render any keys in `include` if those are not available in process.env", () => {
@@ -210,9 +210,9 @@ describe("Test EnvOne API methods", () => {
     const selectedTableRows = document.querySelectorAll('#envOneApi_env_table_row')
     expect(selectedTableRows.length).is.equals(2);
     expect(selectedTableRows[0].children[0].textContent).is.equals("BFF_URL")
-    expect(selectedTableRows[0].children[1].textContent).is.equals(envOneConfigureMockResponse.parsed.BFF_URL)
+    expect(selectedTableRows[0].children[1].children[0].textContent).is.equals(envOneConfigureMockResponse.parsed.BFF_URL)
     expect(selectedTableRows[1].children[0].textContent).is.equals("SALESFORCE_URL")
-    expect(selectedTableRows[1].children[1].textContent).is.equals(envOneConfigureMockResponse.parsed.SALESFORCE_URL)
+    expect(selectedTableRows[1].children[1].children[0].textContent).is.equals(envOneConfigureMockResponse.parsed.SALESFORCE_URL)
   })
 
   it("should not render any content from `include`, if `include` is not an array", () => {
@@ -277,9 +277,9 @@ describe("Test EnvOne API methods", () => {
     const selectedTableRows = document.querySelectorAll('#envOneApi_env_table_row')
     expect(selectedTableRows.length).is.equals(2);
     expect(selectedTableRows[0].children[0].textContent).is.equals("BFF_URL")
-    expect(selectedTableRows[0].children[1].textContent).is.equals(envOneConfigureMockResponse.parsed.BFF_URL)
+    expect(selectedTableRows[0].children[1].children[0].textContent).is.equals(envOneConfigureMockResponse.parsed.BFF_URL)
     expect(selectedTableRows[1].children[0].textContent).is.equals("AWS_ACCESS_SECRET")
-    const renderedSecret = selectedTableRows[1].children[1].textContent;
+    const renderedSecret = selectedTableRows[1].children[1].children[0].textContent;
     expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.parsed.AWS_ACCESS_SECRET)
     expect(renderedSecret.length).is.greaterThan(2);
     expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.parsed.AWS_ACCESS_SECRET[0])
@@ -348,7 +348,7 @@ describe("Test EnvOne API methods", () => {
     expect(selectedTableRows.length).is.equals(Object.keys(envOneConfigureMockResponse.parsed).length);
 
     expect(selectedTableRows[3].children[0].textContent).is.equals("AWS_ACCESS_SECRET")
-    const renderedSecret = selectedTableRows[3].children[1].textContent;
+    const renderedSecret = selectedTableRows[3].children[1].children[0].textContent;
     expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.parsed.AWS_ACCESS_SECRET)
     expect(renderedSecret.length).is.greaterThan(2);
     expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.parsed.AWS_ACCESS_SECRET[0])
@@ -419,7 +419,7 @@ describe("Test EnvOne API methods", () => {
     expect(selectedTableRows.length).is.equals(Object.keys(envOneConfigureMockResponse.parsed).length);
 
     expect(selectedTableRows[3].children[0].textContent).is.equals("AWS_ACCESS_SECRET")
-    let renderedSecret = selectedTableRows[3].children[1].textContent;
+    let renderedSecret = selectedTableRows[3].children[1].children[0].textContent;
     expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.parsed.AWS_ACCESS_SECRET)
     expect(renderedSecret.length).is.greaterThan(2);
     expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.parsed.AWS_ACCESS_SECRET[0])
@@ -428,7 +428,7 @@ describe("Test EnvOne API methods", () => {
     }
 
     expect(selectedTableRows[5].children[0].textContent).is.equals("DB_CONNECTION_PASSWORD")
-    renderedSecret = selectedTableRows[5].children[1].textContent;
+    renderedSecret = selectedTableRows[5].children[1].children[0].textContent;
     expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.parsed.DB_CONNECTION_PASSWORD)
     expect(renderedSecret.length).is.greaterThan(2);
     expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.parsed.DB_CONNECTION_PASSWORD[0])
@@ -458,10 +458,10 @@ describe("Test EnvOne API methods", () => {
     expect(selectedTableRows.length).is.equals(Object.keys(envOneConfigureMockResponse.parsed).length);
 
     expect(selectedTableRows[0].children[0].textContent).is.equals("BFF_URL")
-    expect(selectedTableRows[0].children[1].textContent).is.equals(envOneConfigureMockResponse.parsed.BFF_URL)
+    expect(selectedTableRows[0].children[1].children[0].textContent).is.equals(envOneConfigureMockResponse.parsed.BFF_URL)
 
     expect(selectedTableRows[3].children[0].textContent).is.equals("AWS_ACCESS_SECRET")
-    let renderedSecret = selectedTableRows[3].children[1].textContent;
+    let renderedSecret = selectedTableRows[3].children[1].children[0].textContent;
     expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.parsed.AWS_ACCESS_SECRET)
     expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.parsed.AWS_ACCESS_SECRET[0])
     for(let index = 1; index < renderedSecret.length; index++) {
@@ -469,7 +469,7 @@ describe("Test EnvOne API methods", () => {
     }
 
     expect(selectedTableRows[5].children[0].textContent).is.equals("DB_CONNECTION_PASSWORD")
-    renderedSecret = selectedTableRows[5].children[1].textContent;
+    renderedSecret = selectedTableRows[5].children[1].children[0].textContent;
     expect(renderedSecret).is.not.equals(envOneConfigureMockResponse.parsed.DB_CONNECTION_PASSWORD)
     expect(renderedSecret[0]).is.equals(envOneConfigureMockResponse.parsed.DB_CONNECTION_PASSWORD[0])
     for(let index = 1; index < renderedSecret.length; index++) {

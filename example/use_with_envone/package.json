@@ -10,8 +10,8 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "envone": "^0.5.0",
-    "express": "4.16.4",
-    "envone-ui": "0.1.0"
+    "envone-ui": "^0.1.1",
+    "express": "4.16.4"
   },
   "scripts": {
     "start": "ENV=DEV ENV_TXT=dev node index.js"
