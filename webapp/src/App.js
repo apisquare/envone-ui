@@ -1,5 +1,7 @@
-import React from 'react';
-import './asserts/css/App.css';
+import React from "react";
+import "./asserts/css/App.css";
+import CopyToClipboard from "react-copy-to-clipboard";
+import { AiOutlineCopy as CopyIcon } from "react-icons/ai";
 
 // eslint-disable-next-line
 const documentEnvData = envData;
@@ -10,7 +12,9 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      authToken: ""
+      authToken: "",
+      text: "",
+      result: false,
     };
 
     this.onAuthorizeClick = this.onAuthorizeClick.bind(this);
@@ -21,29 +25,43 @@ class App extends React.Component {
   onAuthorizeClick() {
     const { authToken } = this.state;
     const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ authorization: authToken }),
-      redirect: 'follow'
+      redirect: "follow",
     };
-    fetch(`${originUrl}/env/auth`, requestOptions)
-      .then(response => {
-        if (response.redirected) {
-          window.location.href = response.url;
-        }
-        response.json();
-      });
+    fetch(`${originUrl}/env/auth`, requestOptions).then((response) => {
+      if (response.redirected) {
+        window.location.href = response.url;
+      }
+      response.json();
+    });
   }
 
   getRows(environmentConfig) {
     if (environmentConfig) {
-      const tableRows = environmentConfig.map(envConfig => 
-        <tr key={envConfig.key} id="envOneApi_env_table_row">
-          <td data-label="Key">{envConfig.key}</td>
-          <td data-label="Value">{envConfig.value}</td>
+      const tableRows = environmentConfig.map((envConfig) => (
+        <tr key={envConfig.key} id='envOneApi_env_table_row'>
+          <td data-label='Key'>{envConfig.key}</td>
+          <td data-label='Value'>
+            <p>{envConfig.value}</p>
+            <CopyToClipboard
+              className='clipboard_button'
+              text={this.state.text}
+              onCopy={() => {
+                this.setState({
+                  text: `${envConfig.key}=${envConfig.value}`,
+                  result: true,
+                });
+              }}>
+              <button className='copy_button'>
+                <CopyIcon size={25} />
+              </button>
+            </CopyToClipboard>
+          </td>
         </tr>
-      );
-      return tableRows;  
+      ));
+      return tableRows;
     }
     return <></>;
   }
@@ -51,37 +69,42 @@ class App extends React.Component {
   setAuthToken(e) {
     const token = e.target.value;
     this.setState({
-      authToken: token
+      authToken: token,
     });
   }
 
   render() {
     const { authToken } = this.state;
     return (
-      <div className="App">
-        <header className="App-header">
-          <p>
-            Environment Variables
-          </p>
+      <div className='App'>
+        <header className='App-header'>
+          <p>Environment Variables</p>
         </header>
 
-        <div className="content">
+        <div className='content'>
           {documentEnvData ? (
-            <table id="envOneApi_env_table">
-              <thead id="envOneApi_env_table_head">
+            <table id='envOneApi_env_table'>
+              <thead id='envOneApi_env_table_head'>
                 <tr>
-                  <th scope="col">Key</th>
-                  <th scope="col">Value</th>
+                  <th scope='col'>Key</th>
+                  <th scope='col'>Value</th>
                 </tr>
               </thead>
-              <tbody>
-                {this.getRows(documentEnvData)}
-              </tbody>
+              <tbody>{this.getRows(documentEnvData)}</tbody>
             </table>
           ) : (
-            <div className="auth-form-wrap" id="envOneApi_auth_content">
-              <input type="password" placeholder="Enter authorize token" onChange={this.setAuthToken} value={authToken} />
-              <input type="submit"  onClick={this.onAuthorizeClick} value="Authorize" />
+            <div className='auth-form-wrap' id='envOneApi_auth_content'>
+              <input
+                type='password'
+                placeholder='Enter authorize token'
+                onChange={this.setAuthToken}
+                value={authToken}
+              />
+              <input
+                type='submit'
+                onClick={this.onAuthorizeClick}
+                value='Authorize'
+              />
             </div>
           )}
         </div>

@@ -116,10 +116,10 @@ encodeurl@~1.0.2:
   resolved "https://registry.yarnpkg.com/encodeurl/-/encodeurl-1.0.2.tgz#ad3ff4c86ec2d029322f5a02c3a9a606c95b3f59"
   integrity sha1-rT/0yG7C0CkyL1oCw6mmBslbP1k=
 
-envone-ui@0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/envone-ui/-/envone-ui-0.1.0.tgz#43171021c7c6c2a3c7b28d090aee020572deec23"
-  integrity sha512-JEjLflcjzj0gpP16yC777X7hJX6KXV129P1WpbN2qUB7Klwp1lm2sEf9eqAY8NPwVUDleA0tU0B4k/JETLXWjQ==
+envone-ui@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/envone-ui/-/envone-ui-0.1.1.tgz#590783c1e4dbb2ca2a606e4ba35a98344c79c514"
+  integrity sha512-7vACxFdl0gXTWCjbl+9BvPwwLFp9jVeZX/tG68DmNOx+ljo/ATUzLRrCZ50KFCgi9rFRay6cf6VHpfbbVXKcLQ==
   dependencies:
     handlebars "^4.7.6"
     jsonwebtoken "^8.5.1"
